@@ -15,6 +15,8 @@ public class Pokemon {
   private int boostDuration;
   private boolean paralyzed;
   private int burnDuration;
+  private int damageReduction;
+  private int damageReductionDuration;
   private GameGUI gameGUI;
 
   public Pokemon(String name, int level, int health, int attack, List<Skill> skills, String imagePath) {
@@ -30,6 +32,8 @@ public class Pokemon {
     this.boostDuration = 0;
     this.paralyzed = false;
     this.burnDuration = 0;
+    this.damageReduction = 0;
+    this.damageReductionDuration = 0;
   }
 
   public void setGameGUI(GameGUI gameGUI) {
@@ -76,13 +80,30 @@ public class Pokemon {
     this.burnDuration = burnDuration;
   }
 
+  public boolean hasDamageReductionEffect() {
+    return damageReductionDuration > 0;
+  }
+
   public void takeDamage(int damage) {
+    int originalDamage = damage;
+    if (damageReductionDuration > 0) {
+      damage -= damageReduction;
+      if (damage < 0) {
+        damage = 0;
+      }
+      damageReductionDuration--;
+      gameGUI.appendOutput(name + " 的 " + "守住效果减少了 " + (originalDamage - damage) + " 點傷害!");
+    }
+
     health -= damage;
     if (health < 0) {
       health = 0;
     }
     if (gameGUI != null) {
       gameGUI.flashImage(gameGUI.getImageLabel(this), imagePath);
+    }
+    if(burnDuration == 0) {
+      gameGUI.appendOutput(name + " 受到了 " + damage + " 點傷害!");
     }
   }
 
@@ -92,6 +113,11 @@ public class Pokemon {
         attackBoost += 5;
         boostDuration = skill.getEffectDuration();
       }
+    }
+
+    if (skill.getDamageReductionDuration() > 0) {
+      damageReduction = skill.getDamageReduction();
+      damageReductionDuration = skill.getDamageReductionDuration();
     }
   }
 

@@ -8,6 +8,8 @@ public class Skill {
   private String specialEffect;
   private double specialEffectChance;
   private int burnDuration; // Duration for burn effect
+  private int damageReduction; // Amount of damage reduction
+  private int damageReductionDuration; // Duration for damage reduction effect
 
   public Skill(String name, int power, int maxUses) {
     this(name, power, maxUses, null, 0, null, 0.0, 0);
@@ -22,6 +24,10 @@ public class Skill {
   }
 
   public Skill(String name, int power, int maxUses, String effect, int effectDuration, String specialEffect, double specialEffectChance, int burnDuration) {
+    this(name, power, maxUses, effect, effectDuration, specialEffect, specialEffectChance, burnDuration, 0, 0);
+  }
+
+  public Skill(String name, int power, int maxUses, String effect, int effectDuration, String specialEffect, double specialEffectChance, int burnDuration, int damageReduction, int damageReductionDuration) {
     this.name = name;
     this.power = power;
     this.maxUses = maxUses;
@@ -31,6 +37,8 @@ public class Skill {
     this.specialEffect = specialEffect;
     this.specialEffectChance = specialEffectChance;
     this.burnDuration = burnDuration;
+    this.damageReduction = damageReduction;
+    this.damageReductionDuration = damageReductionDuration;
   }
 
   public String getName() {
@@ -67,6 +75,14 @@ public class Skill {
 
   public int getBurnDuration() {
     return burnDuration;
+  }
+
+  public int getDamageReduction() {
+    return damageReduction;
+  }
+
+  public int getDamageReductionDuration() {
+    return damageReductionDuration;
   }
 
   public void use() {

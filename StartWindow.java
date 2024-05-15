@@ -64,20 +64,29 @@ public class StartWindow extends JFrame {
   }
 
   private void createAndShowGameGUI() {
-    Skill thunderbolt = new Skill("電擊", 40, 10, null, 0, "Paralyze", 1.00);
-    Skill quickAttack = new Skill("伏特攻擊", 10, 20);
-    Skill ironTail = new Skill("鐵尾", 30, 15);
-    Skill electroBall = new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05);
-    Skill ember = new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2); // 添加燃烧效果
-    Skill dragonBreath = new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2); // 添加燃烧效果
-    Skill waterGun = new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2); // 新增技能：水枪
+    Pokemon newPikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(
+            new Skill("電擊", 40, 10, null, 0, "Paralyze", 1.00),
+            new Skill("伏特攻擊", 10, 20),
+            new Skill("鐵尾", 30, 15),
+            new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05)
+    ), "src/resources/pokemon1.png");
 
-    Pokemon pikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(thunderbolt, quickAttack, ironTail, electroBall), "src/resources/pokemon1.png");
-    Pokemon charmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(new Skill("抓擊", 15, 35), ember, new Skill("咆哮", 0, 40, "Attack Boost", 3), dragonBreath), "src/resources/pokemon2.png");
-    Pokemon squirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(new Skill("抓擊", 15, 35), waterGun, new Skill("守住", 0, 20), new Skill("水流喷射", 25, 15)), "src/resources/pokemon3.png");
+    Pokemon newCharmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(
+            new Skill("抓擊", 15, 35),
+            new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2),
+            new Skill("咆哮", 0, 40, "Attack Boost", 3),
+            new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2)
+    ), "src/resources/pokemon2.png");
 
-    GameGUI gameGUI = new GameGUI(pikachu, charmander, squirtle);
-    gameGUI.setVisible(true);
+    Pokemon newSquirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(
+            new Skill("抓擊", 15, 35),
+            new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2),
+            new Skill("守住", 0, 20, "Damage Reduction", 3, null, 0.0, 0, 5, 3), // 添加守住技能
+            new Skill("水流喷射", 25, 15)
+    ), "src/resources/pokemon3.png");
+
+    GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle);
+    newGameGUI.setVisible(true);
   }
 
   public static void main(String[] args) {

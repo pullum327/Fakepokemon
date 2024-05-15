@@ -20,8 +20,11 @@ public class Battle {
         gameGUI.appendOutput(player.getName() + " 使用了 " + skill.getName() + "!");
       } else {
         int damage = calculateDamage(skill, player);
+        if (player.getBoostDuration() > 0) {
+          gameGUI.appendOutput(player.getName() + " 因 " + "咆哮效果增加了 5 點傷害!");
+        }
+        gameGUI.appendOutput(player.getName() + " 使用了 " + skill.getName());
         opponent.takeDamage(damage);
-        gameGUI.appendOutput(player.getName() + " 使用了 " + skill.getName() + " 造成了 " + damage + " 傷害!");
         checkAndApplySpecialEffect(skill, opponent);
       }
       gameGUI.updateHp();
@@ -48,8 +51,11 @@ public class Battle {
         gameGUI.appendOutput(opponent.getName() + " 使用了 " + skill.getName() + "!");
       } else {
         int damage = calculateDamage(skill, opponent);
+        if (opponent.getBoostDuration() > 0) {
+          gameGUI.appendOutput(opponent.getName() + " 因 " + "咆哮效果增加了 5 點傷害!");
+        }
+        gameGUI.appendOutput(opponent.getName() + " 使用了 " + skill.getName());
         player.takeDamage(damage);
-        gameGUI.appendOutput(opponent.getName() + " 使用了 " + skill.getName() + " 造成了 " + damage + " 傷害!");
         checkAndApplySpecialEffect(skill, player);
       }
       gameGUI.updateHp();
@@ -75,7 +81,7 @@ public class Battle {
         gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + " 受到麻痺 無法行動!");
       } else if (skill.getSpecialEffect().equals("Burn")) {
         target.setBurnDuration(skill.getBurnDuration());
-        gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + "受到燃燒效果 接下來2回合每回合-5血!");
+        gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + "受到燃燒效果 接下來" + skill.getBurnDuration() + "回合每回合-5血!");
       }
     }
   }
