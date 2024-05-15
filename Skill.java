@@ -7,14 +7,14 @@ public class Skill {
   private int effectDuration;
   private String specialEffect;
   private double specialEffectChance;
-  private int burnDuration;
+  private int burnDuration; // Duration for burn effect
 
   public Skill(String name, int power, int maxUses) {
-    this(name, power, maxUses, null, 0);
+    this(name, power, maxUses, null, 0, null, 0.0, 0);
   }
 
   public Skill(String name, int power, int maxUses, String effect, int effectDuration) {
-    this(name, power, maxUses, effect, effectDuration, null, 0.0);
+    this(name, power, maxUses, effect, effectDuration, null, 0.0, 0);
   }
 
   public Skill(String name, int power, int maxUses, String effect, int effectDuration, String specialEffect, double specialEffectChance) {
@@ -72,12 +72,6 @@ public class Skill {
   public void use() {
     if (remainingUses > 0) {
       remainingUses--;
-    }
-  }
-
-  public void reduceEffectDuration() {
-    if (effectDuration > 0) {
-      effectDuration--;
     }
   }
 }

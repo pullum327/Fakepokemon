@@ -143,7 +143,17 @@ public class GameGUI extends JFrame {
     return opponentImageLabel;
   }
 
-  void flashImage(final JLabel imageLabel, String imagePath) {
+  public JLabel getImageLabel(Pokemon pokemon) {
+    if (pokemon == player) {
+      return playerImageLabel;
+    } else if (pokemon == opponent) {
+      return opponentImageLabel;
+    } else {
+      return null;
+    }
+  }
+
+  public void flashImage(final JLabel imageLabel, String imagePath) {
     // Only apply the effect if the image path is "pokemon1.png" or "pokemon2.png"
     if (imagePath.contains("pokemon1.png") || imagePath.contains("pokemon2.png") || imagePath.contains("pokemon3.png")) {
       final int delay = 100; // milliseconds
@@ -231,192 +241,193 @@ public class GameGUI extends JFrame {
     return false;
   }
 
-  private void showGameOverDialog(String message) {
-    JDialog gameOverDialog = new JDialog(this, "遊戲結束", true);
-    gameOverDialog.setLayout(new BorderLayout());
-    gameOverDialog.setSize(300, 200);
+      private void showGameOverDialog(String message) {
+        JDialog gameOverDialog = new JDialog(this, "遊戲結束", true);
+        gameOverDialog.setLayout(new BorderLayout());
+        gameOverDialog.setSize(300, 200);
 
-    JLabel messageLabel = new JLabel(message, SwingConstants.CENTER);
-    messageLabel.setFont(new Font("微軟正黑體", Font.BOLD, 18));
-    messageLabel.setForeground(new Color(255, 255, 255));
-    gameOverDialog.add(messageLabel, BorderLayout.CENTER);
+        JLabel messageLabel = new JLabel(message, SwingConstants.CENTER);
+        messageLabel.setFont(new Font("微軟正黑體", Font.BOLD, 18));
+        messageLabel.setForeground(new Color(255, 255, 255));
+        gameOverDialog.add(messageLabel, BorderLayout.CENTER);
 
-    // Set the content pane background to transparent black
-    gameOverDialog.getContentPane().setBackground(new Color(0, 0, 0, 128));
+        // Set the content pane background to transparent black
+        gameOverDialog.getContentPane().setBackground(new Color(0, 0, 0, 200));
 
-    // Make the dialog background transparent
-    gameOverDialog.setUndecorated(true);  // Remove window decorations
-    gameOverDialog.setBackground(new Color(0, 0, 0, 128));  // Transparent background
-    gameOverDialog.setOpacity(0.85f); // Set opacity (optional for additional transparency)
+        // Make the dialog background transparent
+        gameOverDialog.setUndecorated(true);  // Remove window decorations
+        gameOverDialog.setBackground(new Color(0, 0, 0, 128));  // Transparent background
+        gameOverDialog.setOpacity(0.85f); // Set opacity (optional for additional transparency)
 
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.setLayout(new GridLayout(1, 2));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 2));
 
-    JButton restartButton = new JButton("再來一場");
-    restartButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
-    restartButton.setBackground(new Color(0, 0, 0, 128));
-    restartButton.setForeground(Color.WHITE);
-    restartButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        gameOverDialog.dispose();
-        dispose();
-        EventQueue.invokeLater(() -> {
-          Pokemon newPikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(
-                  new Skill("電擊", 40, 10, null, 0, "Paralyze", 1.00),
-                  new Skill("伏特攻擊", 10, 20),
-                  new Skill("鐵尾", 30, 15),
-                  new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05)
-          ), "src/resources/pokemon1.png");
+        JButton restartButton = new JButton("再來一場");
+        restartButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
+        restartButton.setForeground(Color.white);
+        restartButton.setBackground(new Color(0, 0, 0, 128));
+        restartButton.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            gameOverDialog.dispose();
+            dispose();
+            EventQueue.invokeLater(() -> {
+              Pokemon newPikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(
+                      new Skill("電擊", 40, 10, null, 0, "Paralyze", 1.00),
+                      new Skill("伏特攻擊", 10, 20),
+                      new Skill("鐵尾", 30, 15),
+                      new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05)
+              ), "src/resources/pokemon1.png");
 
-          Pokemon newCharmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(
-                  new Skill("抓擊", 15, 35),
-                  new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2),
-                  new Skill("咆哮", 0, 40, "Attack Boost", 3),
-                  new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2)
-          ), "src/resources/pokemon2.png");
+              Pokemon newCharmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(
+                      new Skill("抓擊", 15, 35),
+                      new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2),
+                      new Skill("咆哮", 0, 40, "Attack Boost", 3),
+                      new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2)
+              ), "src/resources/pokemon2.png");
 
-          Pokemon newSquirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(
-                  new Skill("抓擊", 15, 35),
-                  new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2),
-                  new Skill("守住", 0, 20),
-                  new Skill("水流喷射", 25, 15)
-          ), "src/resources/pokemon3.png");
+              Pokemon newSquirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(
+                      new Skill("抓擊", 15, 35),
+                      new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2),
+                      new Skill("守住", 0, 20),
+                      new Skill("水流喷射", 25, 15)
+              ), "src/resources/pokemon3.png");
 
-          GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle);
-          newGameGUI.setVisible(true);
+              GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle);
+              newGameGUI.setVisible(true);
+            });
+          }
         });
-      }
-    });
-    buttonPanel.add(restartButton);
+        buttonPanel.add(restartButton);
 
-    JButton backButton = new JButton("返回開始畫面");
-    backButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
-    backButton.setBackground(new Color(0, 0, 0, 128));
-    backButton.setForeground(Color.WHITE);
-    backButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        gameOverDialog.dispose();
-        EventQueue.invokeLater(() -> {
-          StartWindow startWindow = new StartWindow();
-          startWindow.setVisible(true);
+        JButton backButton = new JButton("返回開始畫面");
+        backButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
+        backButton.setBackground(new Color(0, 0, 0, 128));
+        backButton.setForeground(Color.white);
+        backButton.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            gameOverDialog.dispose();
+            EventQueue.invokeLater(() -> {
+              StartWindow startWindow = new StartWindow();
+              startWindow.setVisible(true);
+            });
+            dispose();
+          }
         });
-        dispose();
+        buttonPanel.add(backButton);
+
+        gameOverDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        gameOverDialog.setLocationRelativeTo(this);
+        gameOverDialog.setVisible(true);
       }
-    });
-    buttonPanel.add(backButton);
 
-    gameOverDialog.add(buttonPanel, BorderLayout.SOUTH);
 
-    gameOverDialog.setLocationRelativeTo(this);
-    gameOverDialog.setVisible(true);
-  }
+      private void disableSkillButtons() {
+        for (JButton button : skillButtons) {
+          button.setEnabled(false);
+        }
+      }
 
-  private void disableSkillButtons() {
-    for (JButton button : skillButtons) {
-      button.setEnabled(false);
+      private JProgressBar createHpBar(int maxHealth, int currentHealth) {
+        JProgressBar hpBar = new JProgressBar(0, maxHealth);
+        hpBar.setValue(currentHealth);
+        hpBar.setStringPainted(true);
+        hpBar.setString(currentHealth + "/" + maxHealth);
+        hpBar.setForeground(Color.RED);
+        hpBar.setPreferredSize(new Dimension(200, 20));
+        return hpBar;
+      }
+
+      private JPanel createImagePanel(JLabel imageLabel, JProgressBar hpBar) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new OverlayLayout(panel));
+        panel.setOpaque(false);
+
+        JPanel hpBarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        hpBarPanel.setOpaque(false);
+        hpBarPanel.add(hpBar);
+
+        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        imagePanel.setOpaque(false);
+        imagePanel.add(imageLabel);
+
+        panel.add(hpBarPanel);
+        panel.add(imagePanel);
+
+        return panel;
+      }
+
+      private JPanel createSkillInfoPanel(Skill skill) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+
+        JLabel nameLabel = createStyledLabel(skill.getName(), 65);
+        JLabel powerLabel = createStyledLabel("威力: " + skill.getPower(), 65);
+        JLabel usesLabel = createStyledLabel("次數: " + skill.getRemainingUses() + "/" + skill.getMaxUses(), 65);
+
+        panel.add(nameLabel);
+        panel.add(powerLabel);
+        panel.add(usesLabel);
+
+        return panel;
+      }
+
+      private JLabel createStyledLabel(String text, int width) {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("微軟正黑體", Font.BOLD, 12));
+        label.setPreferredSize(new Dimension(width, 20));
+        label.setMaximumSize(new Dimension(width, 20));
+        label.setOpaque(true);
+        label.setBackground(new Color(0, 0, 0, 200));
+        return label;
+      }
+
+      private void updateSkillInfoPanels() {
+        for (int i = 0; i < player.getSkills().size(); i++) {
+          Skill skill = player.getSkills().get(i);
+          JPanel skillInfoPanel = createSkillInfoPanel(skill);
+          JPanel skillButtonPanel = (JPanel) skillButtons[i].getParent();
+          skillButtonPanel.remove(1);
+          skillButtonPanel.add(skillInfoPanel, BorderLayout.SOUTH);
+        }
+        skillPanel.revalidate();
+        skillPanel.repaint();
+      }
+
+      private void updateSkillToolTips() {
+        for (int i = 0; i < player.getSkills().size(); i++) {
+          Skill skill = player.getSkills().get(i);
+          skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
+        }
+        updateSkillInfoPanels();
+      }
+
+      public void updateHp() {
+        updateHpBars();
+        updateSkillToolTips();
+      }
+
+      private void updateHpBars() {
+        playerHpBar.setValue(player.getHealth());
+        playerHpBar.setString(player.getHealth() + "/" + player.getMaxHealth());
+        opponentHpBar.setValue(opponent.getHealth());
+        opponentHpBar.setString(opponent.getHealth() + "/" + opponent.getMaxHealth());
+      }
+
+      public void appendOutput(String text) {
+        if (outputMessages.size() >= 6) {
+          outputMessages.poll();
+        }
+        outputMessages.add(text);
+        StringBuilder outputHtml = new StringBuilder("<html>");
+        for (String message : outputMessages) {
+          outputHtml.append(message).append("<br>");
+        }
+        outputHtml.append("</html>");
+        outputLabel.setText(outputHtml.toString());
+      }
     }
-  }
-
-  private JProgressBar createHpBar(int maxHealth, int currentHealth) {
-    JProgressBar hpBar = new JProgressBar(0, maxHealth);
-    hpBar.setValue(currentHealth);
-    hpBar.setStringPainted(true);
-    hpBar.setString(currentHealth + "/" + maxHealth);
-    hpBar.setForeground(Color.RED);
-    hpBar.setPreferredSize(new Dimension(200, 20));
-    return hpBar;
-  }
-
-  private JPanel createImagePanel(JLabel imageLabel, JProgressBar hpBar) {
-    JPanel panel = new JPanel();
-    panel.setLayout(new OverlayLayout(panel));
-    panel.setOpaque(false);
-
-    JPanel hpBarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-    hpBarPanel.setOpaque(false);
-    hpBarPanel.add(hpBar);
-
-    JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-    imagePanel.setOpaque(false);
-    imagePanel.add(imageLabel);
-
-    panel.add(hpBarPanel);
-    panel.add(imagePanel);
-
-    return panel;
-  }
-
-  private JPanel createSkillInfoPanel(Skill skill) {
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    panel.setOpaque(false);
-
-    JLabel nameLabel = createStyledLabel(skill.getName(), 65);
-    JLabel powerLabel = createStyledLabel("威力: " + skill.getPower(), 65);
-    JLabel usesLabel = createStyledLabel("次數: " + skill.getRemainingUses() + "/" + skill.getMaxUses(), 65);
-
-    panel.add(nameLabel);
-    panel.add(powerLabel);
-    panel.add(usesLabel);
-
-    return panel;
-  }
-
-  private JLabel createStyledLabel(String text, int width) {
-    JLabel label = new JLabel(text, SwingConstants.CENTER);
-    label.setForeground(Color.WHITE);
-    label.setFont(new Font("微軟正黑體", Font.BOLD, 12));
-    label.setPreferredSize(new Dimension(width, 20));
-    label.setMaximumSize(new Dimension(width, 20));
-    label.setOpaque(true);
-    label.setBackground(new Color(0, 0, 0, 200));
-    return label;
-  }
-
-  private void updateSkillInfoPanels() {
-    for (int i = 0; i < player.getSkills().size(); i++) {
-      Skill skill = player.getSkills().get(i);
-      JPanel skillInfoPanel = createSkillInfoPanel(skill);
-      JPanel skillButtonPanel = (JPanel) skillButtons[i].getParent();
-      skillButtonPanel.remove(1);
-      skillButtonPanel.add(skillInfoPanel, BorderLayout.SOUTH);
-    }
-    skillPanel.revalidate();
-    skillPanel.repaint();
-  }
-
-  private void updateSkillToolTips() {
-    for (int i = 0; i < player.getSkills().size(); i++) {
-      Skill skill = player.getSkills().get(i);
-      skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
-    }
-    updateSkillInfoPanels();
-  }
-
-  public void updateHp() {
-    updateHpBars();
-    updateSkillToolTips();
-  }
-
-  private void updateHpBars() {
-    playerHpBar.setValue(player.getHealth());
-    playerHpBar.setString(player.getHealth() + "/" + player.getMaxHealth());
-    opponentHpBar.setValue(opponent.getHealth());
-    opponentHpBar.setString(opponent.getHealth() + "/" + opponent.getMaxHealth());
-  }
-
-  public void appendOutput(String text) {
-    if (outputMessages.size() >= 6) {
-      outputMessages.poll();
-    }
-    outputMessages.add(text);
-    StringBuilder outputHtml = new StringBuilder("<html>");
-    for (String message : outputMessages) {
-      outputHtml.append(message).append("<br>");
-    }
-    outputHtml.append("</html>");
-    outputLabel.setText(outputHtml.toString());
-  }
-}

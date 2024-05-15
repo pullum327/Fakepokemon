@@ -70,15 +70,13 @@ public class StartWindow extends JFrame {
     Skill electroBall = new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05);
     Skill ember = new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2); // 添加燃烧效果
     Skill dragonBreath = new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2); // 添加燃烧效果
+    Skill waterGun = new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2); // 新增技能：水枪
 
     Pokemon pikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(thunderbolt, quickAttack, ironTail, electroBall), "src/resources/pokemon1.png");
+    Pokemon charmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(new Skill("抓擊", 15, 35), ember, new Skill("咆哮", 0, 40, "Attack Boost", 3), dragonBreath), "src/resources/pokemon2.png");
+    Pokemon squirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(new Skill("抓擊", 15, 35), waterGun, new Skill("守住", 0, 20), new Skill("水流喷射", 25, 15)), "src/resources/pokemon3.png");
 
-    Skill scratch = new Skill("抓擊", 15, 35);
-    Skill opponentGrowl = new Skill("咆哮", 0, 40, "Attack Boost", 3);
-
-    Pokemon charmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(scratch, ember, opponentGrowl, dragonBreath), "src/resources/pokemon2.png");
-
-    GameGUI gameGUI = new GameGUI(pikachu, charmander);
+    GameGUI gameGUI = new GameGUI(pikachu, charmander, squirtle);
     gameGUI.setVisible(true);
   }
 

@@ -15,8 +15,6 @@ public class Pokemon {
   private int boostDuration;
   private boolean paralyzed;
   private int burnDuration;
-  private int defenseBoost;
-  private int defenseBoostDuration;
   private GameGUI gameGUI;
 
   public Pokemon(String name, int level, int health, int attack, List<Skill> skills, String imagePath) {
@@ -32,8 +30,6 @@ public class Pokemon {
     this.boostDuration = 0;
     this.paralyzed = false;
     this.burnDuration = 0;
-    this.defenseBoost = 0;
-    this.defenseBoostDuration = 0;
   }
 
   public void setGameGUI(GameGUI gameGUI) {
@@ -80,27 +76,13 @@ public class Pokemon {
     this.burnDuration = burnDuration;
   }
 
-  public int getDefenseBoost() {
-    return defenseBoost;
-  }
-
-  public int getDefenseBoostDuration() {
-    return defenseBoostDuration;
-  }
-
-  public void setDefenseBoost(int defenseBoost, int defenseBoostDuration) {
-    this.defenseBoost = defenseBoost;
-    this.defenseBoostDuration = defenseBoostDuration;
-  }
-
   public void takeDamage(int damage) {
-    int finalDamage = damage;
-    if (defenseBoostDuration > 0) {
-      finalDamage = Math.max(0, damage - defenseBoost);
-    }
-    health -= finalDamage;
+    health -= damage;
     if (health < 0) {
       health = 0;
+    }
+    if (gameGUI != null) {
+      gameGUI.flashImage(gameGUI.getImageLabel(this), imagePath);
     }
   }
 
@@ -109,8 +91,6 @@ public class Pokemon {
       if (skill.getEffect().equals("Attack Boost")) {
         attackBoost += 5;
         boostDuration = skill.getEffectDuration();
-      } else if (skill.getEffect().equals("Defense Boost")) {
-        setDefenseBoost(5, skill.getEffectDuration());
       }
     }
   }
@@ -120,13 +100,6 @@ public class Pokemon {
       boostDuration--;
       if (boostDuration == 0) {
         attackBoost = 0;
-      }
-    }
-
-    if (defenseBoostDuration > 0) {
-      defenseBoostDuration--;
-      if (defenseBoostDuration == 0) {
-        defenseBoost = 0;
       }
     }
   }
