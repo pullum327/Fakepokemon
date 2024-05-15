@@ -13,7 +13,11 @@ public class Pokemon {
   private ImageIcon imageIcon;
   private int attackBoost;
   private int boostDuration;
-  private boolean paralyzed; // Add this field
+  private boolean paralyzed;
+  private int burnDuration;
+  private int defenseBoost;
+  private int defenseBoostDuration;
+  private GameGUI gameGUI;
 
   public Pokemon(String name, int level, int health, int attack, List<Skill> skills, String imagePath) {
     this.name = name;
@@ -26,7 +30,14 @@ public class Pokemon {
     this.imageIcon = createResizedIcon(imagePath, 300, 300);
     this.attackBoost = 0;
     this.boostDuration = 0;
-    this.paralyzed = false; // Initialize the field
+    this.paralyzed = false;
+    this.burnDuration = 0;
+    this.defenseBoost = 0;
+    this.defenseBoostDuration = 0;
+  }
+
+  public void setGameGUI(GameGUI gameGUI) {
+    this.gameGUI = gameGUI;
   }
 
   public String getName() {
@@ -61,8 +72,33 @@ public class Pokemon {
     this.paralyzed = paralyzed;
   }
 
+  public int getBurnDuration() {
+    return burnDuration;
+  }
+
+  public void setBurnDuration(int burnDuration) {
+    this.burnDuration = burnDuration;
+  }
+
+  public int getDefenseBoost() {
+    return defenseBoost;
+  }
+
+  public int getDefenseBoostDuration() {
+    return defenseBoostDuration;
+  }
+
+  public void setDefenseBoost(int defenseBoost, int defenseBoostDuration) {
+    this.defenseBoost = defenseBoost;
+    this.defenseBoostDuration = defenseBoostDuration;
+  }
+
   public void takeDamage(int damage) {
-    health -= damage;
+    int finalDamage = damage;
+    if (defenseBoostDuration > 0) {
+      finalDamage = Math.max(0, damage - defenseBoost);
+    }
+    health -= finalDamage;
     if (health < 0) {
       health = 0;
     }
@@ -73,6 +109,8 @@ public class Pokemon {
       if (skill.getEffect().equals("Attack Boost")) {
         attackBoost += 5;
         boostDuration = skill.getEffectDuration();
+      } else if (skill.getEffect().equals("Defense Boost")) {
+        setDefenseBoost(5, skill.getEffectDuration());
       }
     }
   }
@@ -84,6 +122,13 @@ public class Pokemon {
         attackBoost = 0;
       }
     }
+
+    if (defenseBoostDuration > 0) {
+      defenseBoostDuration--;
+      if (defenseBoostDuration == 0) {
+        defenseBoost = 0;
+      }
+    }
   }
 
   public int calculateAttackDamage(int skillPower) {
@@ -92,6 +137,10 @@ public class Pokemon {
 
   public ImageIcon getImageIcon() {
     return imageIcon;
+  }
+
+  public String getImagePath() {
+    return imagePath;
   }
 
   private ImageIcon createResizedIcon(String path, int width, int height) {

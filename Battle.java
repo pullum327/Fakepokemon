@@ -7,6 +7,8 @@ public class Battle {
     this.player = player;
     this.opponent = opponent;
     this.gameGUI = gameGUI;
+    this.player.setGameGUI(gameGUI);
+    this.opponent.setGameGUI(gameGUI);
   }
 
   public void playerTurn(int skillIndex) {
@@ -24,15 +26,16 @@ public class Battle {
       }
       gameGUI.updateHp();
     } else {
-      gameGUI.appendOutput("No remaining uses for " + skill.getName() + "!");
+      gameGUI.appendOutput(player.getName() + " 没有剩余的 " + skill.getName() + " 使用次数了!");
     }
-    player.updateEffects(); // Update player's effects
+    player.updateEffects();
+    opponent.updateEffects();
   }
 
   public void opponentTurn() {
     if (opponent.isParalyzed()) {
       gameGUI.appendOutput(opponent.getName() + " 因 " + "麻痺" + " 無法行動!");
-      opponent.setParalyzed(false); // Clear paralysis after skipping turn
+      opponent.setParalyzed(false);
       return;
     }
 
@@ -51,9 +54,10 @@ public class Battle {
       }
       gameGUI.updateHp();
     } else {
-      opponentTurn(); // Retry if no remaining uses
+      opponentTurn();
     }
-    opponent.updateEffects(); // Update opponent's effects
+    player.updateEffects();
+    opponent.updateEffects();
   }
 
   private int calculateDamage(Skill skill, Pokemon attacker) {
@@ -69,6 +73,9 @@ public class Battle {
       if (skill.getSpecialEffect().equals("Paralyze")) {
         target.setParalyzed(true);
         gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + " 受到麻痺 無法行動!");
+      } else if (skill.getSpecialEffect().equals("Burn")) {
+        target.setBurnDuration(skill.getBurnDuration());
+        gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + "受到燃燒效果 接下來2回合每回合-5血!");
       }
     }
   }
