@@ -102,9 +102,17 @@ public class Pokemon {
     if (gameGUI != null) {
       gameGUI.flashImage(gameGUI.getImageLabel(this), imagePath);
     }
-    if(burnDuration == 0) {
+    if (burnDuration == 0) {
       gameGUI.appendOutput(name + " 受到了 " + damage + " 點傷害!");
     }
+  }
+
+  public void heal(int amount) {
+    health += amount;
+    if (health > maxHealth) {
+      health = maxHealth;
+    }
+    gameGUI.appendOutput(name + " 恢复了 " + amount + " 點生命值!");
   }
 
   public void applyEffect(Skill skill) {
@@ -112,12 +120,15 @@ public class Pokemon {
       if (skill.getEffect().equals("Attack Boost")) {
         attackBoost += 5;
         boostDuration = skill.getEffectDuration();
+      } else if (skill.getEffect().equals("Heal")) {
+        heal(20); // Heal 20 HP
       }
     }
 
     if (skill.getDamageReductionDuration() > 0) {
       damageReduction = skill.getDamageReduction();
       damageReductionDuration = skill.getDamageReductionDuration();
+      //gameGUI.appendOutput(name + " 使用了 " + skill.getName() + ", 接下來 " + damageReductionDuration + " 回合內减少 " + damageReduction + " 點傷害!");
     }
   }
 

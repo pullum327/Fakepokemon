@@ -12,6 +12,11 @@ public class Battle {
   }
 
   public void playerTurn(int skillIndex) {
+    if (player.isParalyzed()) {
+      gameGUI.appendOutput(player.getName() + " 因 " + "麻痺" + " 無法行動!");
+      player.setParalyzed(false);
+      return;
+    }
     Skill skill = player.getSkills().get(skillIndex);
     if (skill.getRemainingUses() > 0) {
       skill.use();
@@ -78,7 +83,6 @@ public class Battle {
     if (skill.getSpecialEffect() != null && Math.random() < skill.getSpecialEffectChance()) {
       if (skill.getSpecialEffect().equals("Paralyze")) {
         target.setParalyzed(true);
-        gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + " 受到麻痺 無法行動!");
       } else if (skill.getSpecialEffect().equals("Burn")) {
         target.setBurnDuration(skill.getBurnDuration());
         gameGUI.appendOutput(target.getName() + " 因 " + skill.getName() + "受到燃燒效果 接下來" + skill.getBurnDuration() + "回合每回合-5血!");

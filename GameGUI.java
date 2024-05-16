@@ -31,6 +31,9 @@ public class GameGUI extends JFrame {
     setTitle("Pokemon Battle");
     setSize(800, 600);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    ImageIcon icon = new ImageIcon("src/resources/pokemon4_fainted.png"); // 替换为你的图标路径
+    setIconImage(icon.getImage());
+
 
     // Create background panel
     BackgroundPanel backgroundPanel = new BackgroundPanel("src/resources/background.png");
@@ -92,7 +95,13 @@ public class GameGUI extends JFrame {
       ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
       skillButtons[i] = new JButton(scaledIcon);
-      skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
+      if (i == 0) {
+        skillButtons[i].setToolTipText("<html>" + skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")<br>有10%機率造成麻痺!</html>");
+      } else if (i==3) {
+        skillButtons[i].setToolTipText("<html>" + skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")<br>有5%機率造成麻痺!</html>");
+      } else {
+        skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
+      }
       skillButtons[i].setPreferredSize(new Dimension(64, 64));
 
       JPanel skillInfoPanel = createSkillInfoPanel(skill);
@@ -154,8 +163,8 @@ public class GameGUI extends JFrame {
   }
 
   public void flashImage(final JLabel imageLabel, String imagePath) {
-    // Only apply the effect if the image path is "pokemon1.png" or "pokemon2.png"
-    if (imagePath.contains("pokemon1.png") || imagePath.contains("pokemon2.png") || imagePath.contains("pokemon3.png")) {
+    // Only apply the effect if the image path is "pokemon1.png" or "pokemon2.png" or "pokemon3.png" or "pokemon4.png"
+    if (imagePath.contains("pokemon1.png") || imagePath.contains("pokemon2.png") || imagePath.contains("pokemon3.png") || imagePath.contains("pokemon4.png")) {
       final int delay = 100; // milliseconds
       final int totalFlashes = 5;
       Timer timer = new Timer(delay, new ActionListener() {
@@ -186,6 +195,8 @@ public class GameGUI extends JFrame {
       faintedImagePath = "src/resources/pokemon2_fainted.png";
     } else if (pokemon.getImagePath().contains("pokemon3.png")) {
       faintedImagePath = "src/resources/pokemon3_fainted.png";
+    } else if (pokemon.getImagePath().contains("pokemon4.png")) {
+      faintedImagePath = "src/resources/pokemon4_fainted.png";
     } else {
       return;
     }
@@ -230,12 +241,12 @@ public class GameGUI extends JFrame {
     if (player.getHealth() <= 0) {
       appendOutput(player.getName() + "失去戰鬥能力");
       replaceImageWithFainted(player, playerImageLabel);
-      showGameOverDialog(opponent.getName()+"取得勝利!");
+      showGameOverDialog(opponent.getName() + "取得勝利!");
       return true;
     } else if (opponent.getHealth() <= 0) {
       appendOutput(opponent.getName() + "失去戰鬥能力");
       replaceImageWithFainted(opponent, opponentImageLabel);
-      showGameOverDialog(player.getName()+"取得勝利!");
+      showGameOverDialog(player.getName() + "取得勝利!");
       return true;
     }
     return false;
@@ -289,11 +300,19 @@ public class GameGUI extends JFrame {
           Pokemon newSquirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(
                   new Skill("抓擊", 15, 35),
                   new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2),
-                  new Skill("守住", 0, 20, "Damage Reduction", 3, null, 0.0, 0, 5, 3), // 添加守住技能
+                  new Skill("守住", 0, 20, "Damage Reduction", 3, null, 0.0, 0, 5, 3),
                   new Skill("水流喷射", 25, 15)
           ), "src/resources/pokemon3.png");
 
-          GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle);
+          // Create Bulbasaur
+          Pokemon newBulbasaur = new Pokemon("妙蛙种子", 9, 90, 14, Arrays.asList(
+                  new Skill("藤鞭", 35, 15),
+                  new Skill("种子炸弹", 45, 10),
+                  new Skill("麻痹粉", 0, 20, null, 0, "Paralyze", 0.2),
+                  new Skill("光合作用", 0, 5, "Heal", 0)
+          ), "src/resources/pokemon4.png");
+
+          GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle, newBulbasaur);
           newGameGUI.setVisible(true);
         });
       }
@@ -322,6 +341,7 @@ public class GameGUI extends JFrame {
     gameOverDialog.setLocationRelativeTo(this);
     gameOverDialog.setVisible(true);
   }
+
 
   private void disableSkillButtons() {
     for (JButton button : skillButtons) {
@@ -400,7 +420,13 @@ public class GameGUI extends JFrame {
   private void updateSkillToolTips() {
     for (int i = 0; i < player.getSkills().size(); i++) {
       Skill skill = player.getSkills().get(i);
-      skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
+      if (i == 0) {
+        skillButtons[i].setToolTipText("<html>" + skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")<br>有10%機率造成麻痺!</html>");
+      } else if (i==3) {
+        skillButtons[i].setToolTipText("<html>" + skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")<br>有5%機率造成麻痺!</html>");
+      }else {
+        skillButtons[i].setToolTipText(skill.getName() + " (Power: " + skill.getPower() + ", Uses: " + skill.getRemainingUses() + ")");
+      }
     }
     updateSkillInfoPanels();
   }
@@ -430,3 +456,4 @@ public class GameGUI extends JFrame {
     outputLabel.setText(outputHtml.toString());
   }
 }
+

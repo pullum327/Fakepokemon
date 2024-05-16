@@ -9,6 +9,8 @@ public class StartWindow extends JFrame {
     setTitle("Welcome to Pokemon Battle");
     setSize(800, 600);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    ImageIcon icon = new ImageIcon("src/resources/pokemon4_fainted.png"); // 替换为你的图标路径
+    setIconImage(icon.getImage());
     setLayout(null); // Use null layout for absolute positioning
 
     BackgroundPanel backgroundPanel = new BackgroundPanel("src/resources/BG.png");
@@ -20,8 +22,8 @@ public class StartWindow extends JFrame {
     JLabel startLabel = new JLabel(startIcon);
 
     // Set the position and size of the start button based on the actual size of the image
-    int buttonX = 225; // X-coordinate
-    int buttonY = 350; // Y-coordinate
+    int buttonX = 210; // X-coordinate
+    int buttonY = 370; // Y-coordinate
     int buttonWidth = startIcon.getIconWidth(); // Button width
     int buttonHeight = startIcon.getIconHeight(); // Button height
 
@@ -42,26 +44,6 @@ public class StartWindow extends JFrame {
     backgroundPanel.add(startLabel);
   }
 
-  // Custom background panel class
-  class BackgroundPanel extends JPanel {
-    private Image backgroundImage;
-
-    public BackgroundPanel(String filePath) {
-      try {
-        backgroundImage = new ImageIcon(filePath).getImage();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      if (backgroundImage != null) {
-        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-      }
-    }
-  }
 
   private void createAndShowGameGUI() {
     Pokemon newPikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(
@@ -85,7 +67,14 @@ public class StartWindow extends JFrame {
             new Skill("水流喷射", 25, 15)
     ), "src/resources/pokemon3.png");
 
-    GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle);
+    Pokemon newBulbasaur = new Pokemon("妙蛙种子", 9, 90, 14, Arrays.asList(
+            new Skill("藤鞭", 35, 15),
+            new Skill("种子炸弹", 45, 10),
+            new Skill("麻痹粉", 0, 20, null, 0, "Paralyze", 0.2),
+            new Skill("光合作用", 0, 5, "Heal", 0)
+    ), "src/resources/pokemon4.png");
+
+    GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle,newBulbasaur);
     newGameGUI.setVisible(true);
   }
 
