@@ -2,6 +2,7 @@ public class Battle {
   private Pokemon player;
   private Pokemon opponent;
   private GameGUI gameGUI;
+  private MusicPlayer skillSoundPlayer; // 添加音效播放器成員變量
 
   public Battle(Pokemon player, Pokemon opponent, GameGUI gameGUI) {
     this.player = player;
@@ -9,6 +10,7 @@ public class Battle {
     this.gameGUI = gameGUI;
     this.player.setGameGUI(gameGUI);
     this.opponent.setGameGUI(gameGUI);
+    this.skillSoundPlayer = new MusicPlayer(); // 初始化音效播放器
   }
 
   public void playerTurn(int skillIndex) {
@@ -18,11 +20,20 @@ public class Battle {
       return;
     }
     Skill skill = player.getSkills().get(skillIndex);
+    if(skill.getRemainingUses()<=1)
+    {
+      gameGUI.updateSkillButtons();
+    }
     if (skill.getRemainingUses() > 0) {
       skill.use();
+      // 播放音效
+      if (skill.getName().equals("電擊")) {
+        skillSoundPlayer.skillMusic("src/resources/skill1.wav", -5.0f); // 替换为你的音效文件路径
+      }
       if (skill.getEffect() != null) {
-        player.applyEffect(skill);
         gameGUI.appendOutput(player.getName() + " 使用了 " + skill.getName() + "!");
+        player.applyEffect(skill);
+
       } else {
         int damage = calculateDamage(skill, player);
         if (player.getBoostDuration() > 0) {
@@ -33,7 +44,7 @@ public class Battle {
         checkAndApplySpecialEffect(skill, opponent);
       }
       gameGUI.updateHp();
-    } else {
+    } else{
       gameGUI.appendOutput(player.getName() + " 没有剩余的 " + skill.getName() + " 使用次数了!");
     }
     player.updateEffects();
@@ -51,9 +62,14 @@ public class Battle {
     Skill skill = opponent.getSkills().get(randomSkillIndex);
     if (skill.getRemainingUses() > 0) {
       skill.use();
+      // 播放音效
+      if (skill.getName().equals("電擊")) {
+        skillSoundPlayer.playMusic("src/resources/skill1.wav", -10.0f); // 替换为你的音效文件路径
+      }
       if (skill.getEffect() != null) {
-        opponent.applyEffect(skill);
         gameGUI.appendOutput(opponent.getName() + " 使用了 " + skill.getName() + "!");
+        opponent.applyEffect(skill);
+
       } else {
         int damage = calculateDamage(skill, opponent);
         if (opponent.getBoostDuration() > 0) {
@@ -89,4 +105,5 @@ public class Battle {
       }
     }
   }
+
 }

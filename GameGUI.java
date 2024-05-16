@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 
 public class GameGUI extends JFrame {
   private JProgressBar playerHpBar;
@@ -22,10 +25,14 @@ public class GameGUI extends JFrame {
   private LinkedList<String> outputMessages;
   private JPanel skillPanel;
   private boolean isPlayerTurn = true;
+  private MusicPlayer backgroundMusicPlayer; // 添加音樂播放器成員變量
+  private MusicPlayer victoryMusicPlayer;
+  private List<Pokemon> allOpponents;
 
   public GameGUI(Pokemon player, Pokemon... opponents) {
     this.player = player;
     this.opponent = selectRandomOpponent(Arrays.asList(opponents));
+    this.allOpponents = Arrays.asList(opponents);
     this.battle = new Battle(player, opponent, this);
 
     setTitle("Pokemon Battle");
@@ -39,6 +46,9 @@ public class GameGUI extends JFrame {
     BackgroundPanel backgroundPanel = new BackgroundPanel("src/resources/background.png");
     backgroundPanel.setLayout(new BorderLayout());
     setContentPane(backgroundPanel);
+
+    backgroundMusicPlayer = new MusicPlayer();
+    backgroundMusicPlayer.playMusic("src/resources/battle_music.wav", -15.0f);
 
     JPanel topPanel = new JPanel();
     topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
@@ -123,7 +133,7 @@ public class GameGUI extends JFrame {
             updateSkillToolTips();
             updateHpBars();
             if (checkGameOver()) {
-              disableSkillButtons();
+
             } else {
               isPlayerTurn = false;
               opponentAttack();
@@ -137,6 +147,12 @@ public class GameGUI extends JFrame {
 
     add(topPanel, BorderLayout.NORTH);
     add(bottomPanel, BorderLayout.SOUTH);
+  }
+  private void setVolume(Clip clip, float volume) {
+    if (clip != null) {
+      FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+      gainControl.setValue(volume); // 设置音量，值范围为 (min, max)
+    }
   }
 
   private Pokemon selectRandomOpponent(List<Pokemon> opponents) {
@@ -226,7 +242,7 @@ public class GameGUI extends JFrame {
         updateSkillToolTips();
         updateHpBars();
         if (checkGameOver()) {
-          disableSkillButtons();
+
         } else {
           isPlayerTurn = true;
         }
@@ -241,18 +257,22 @@ public class GameGUI extends JFrame {
     if (player.getHealth() <= 0) {
       appendOutput(player.getName() + "失去戰鬥能力");
       replaceImageWithFainted(player, playerImageLabel);
-      showGameOverDialog(opponent.getName() + "取得勝利!");
+      showGameOverDialog(opponent.getName() + "取得勝利!",false);
       return true;
     } else if (opponent.getHealth() <= 0) {
       appendOutput(opponent.getName() + "失去戰鬥能力");
       replaceImageWithFainted(opponent, opponentImageLabel);
-      showGameOverDialog(player.getName() + "取得勝利!");
+      showGameOverDialog(player.getName() + "取得勝利!",true);
       return true;
     }
     return false;
   }
 
-  private void showGameOverDialog(String message) {
+  private void showGameOverDialog(String message,boolean playerWins) {
+    backgroundMusicPlayer.stopMusic(); // 停止背景音樂
+    victoryMusicPlayer = new MusicPlayer();
+    victoryMusicPlayer.playMusic("src/resources/victory.wav", -10.0f);
+
     JDialog gameOverDialog = new JDialog(this, "遊戲結束", true);
     gameOverDialog.setLayout(new BorderLayout());
     gameOverDialog.setSize(300, 200);
@@ -262,62 +282,29 @@ public class GameGUI extends JFrame {
     messageLabel.setForeground(new Color(255, 255, 255));
     gameOverDialog.add(messageLabel, BorderLayout.CENTER);
 
-    // Set the content pane background to transparent black
     gameOverDialog.getContentPane().setBackground(new Color(0, 0, 0, 200));
-
-    // Make the dialog background transparent
-    gameOverDialog.setUndecorated(true);  // Remove window decorations
-    gameOverDialog.setBackground(new Color(0, 0, 0, 128));  // Transparent background
-    gameOverDialog.setOpacity(0.85f); // Set opacity (optional for additional transparency)
+    gameOverDialog.setUndecorated(true);
+    gameOverDialog.setBackground(new Color(0, 0, 0, 128));
+    gameOverDialog.setOpacity(0.85f);
 
     JPanel buttonPanel = new JPanel();
-    buttonPanel.setLayout(new GridLayout(1, 2));
-
-    JButton restartButton = new JButton("再來一場");
-    restartButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
-    restartButton.setForeground(Color.white);
-    restartButton.setBackground(new Color(0, 0, 0, 128));
-    restartButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        gameOverDialog.dispose();
-        dispose();
-        EventQueue.invokeLater(() -> {
-          Pokemon newPikachu = new Pokemon("比卡超", 10, 100, 15, Arrays.asList(
-                  new Skill("電擊", 40, 10, null, 0, "Paralyze", 1.00),
-                  new Skill("伏特攻擊", 10, 20),
-                  new Skill("鐵尾", 30, 15),
-                  new Skill("電球", 25, 10, null, 0, "Paralyze", 0.05)
-          ), "src/resources/pokemon1.png");
-
-          Pokemon newCharmander = new Pokemon("小火龍", 8, 80, 12, Arrays.asList(
-                  new Skill("抓擊", 15, 35),
-                  new Skill("火花", 30, 15, null, 0, "Burn", 1.00, 2),
-                  new Skill("咆哮", 0, 40, "Attack Boost", 3),
-                  new Skill("龍息", 40, 10, null, 0, "Burn", 1.00, 2)
-          ), "src/resources/pokemon2.png");
-
-          Pokemon newSquirtle = new Pokemon("杰尼龟", 9, 90, 14, Arrays.asList(
-                  new Skill("抓擊", 15, 35),
-                  new Skill("水枪", 30, 15, null, 0, "Soak", 1.00, 2),
-                  new Skill("守住", 0, 20, "Damage Reduction", 3, null, 0.0, 0, 5, 3),
-                  new Skill("水流喷射", 25, 15)
-          ), "src/resources/pokemon3.png");
-
-          // Create Bulbasaur
-          Pokemon newBulbasaur = new Pokemon("妙蛙种子", 9, 90, 14, Arrays.asList(
-                  new Skill("藤鞭", 35, 15),
-                  new Skill("种子炸弹", 45, 10),
-                  new Skill("麻痹粉", 0, 20, null, 0, "Paralyze", 0.2),
-                  new Skill("光合作用", 0, 5, "Heal", 0)
-          ), "src/resources/pokemon4.png");
-
-          GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle, newBulbasaur);
-          newGameGUI.setVisible(true);
-        });
-      }
-    });
-    buttonPanel.add(restartButton);
+    buttonPanel.setLayout(new GridLayout(1, playerWins ? 2 : 1));
+    if (playerWins) {
+      JButton restartButton = new JButton("再來一場");
+      restartButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
+      restartButton.setForeground(Color.white);
+      restartButton.setBackground(new Color(0, 0, 0, 128));
+      restartButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          victoryMusicPlayer.stopMusic();
+          backgroundMusicPlayer.playMusic("src/resources/battle_music.wav",-15.0f);
+          gameOverDialog.dispose();
+          restartGame();
+        }
+      });
+      buttonPanel.add(restartButton);
+    }
 
     JButton backButton = new JButton("返回開始畫面");
     backButton.setFont(new Font("微軟正黑體", Font.BOLD, 16));
@@ -327,6 +314,7 @@ public class GameGUI extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         gameOverDialog.dispose();
+        victoryMusicPlayer.stopMusic();
         EventQueue.invokeLater(() -> {
           StartWindow startWindow = new StartWindow();
           startWindow.setVisible(true);
@@ -342,12 +330,33 @@ public class GameGUI extends JFrame {
     gameOverDialog.setVisible(true);
   }
 
+  private void restartGame() {
+    // 重新選擇隨機對手
+    this.opponent = selectRandomOpponent(allOpponents);
+    this.battle = new Battle(this.player, this.opponent, this);
 
-  private void disableSkillButtons() {
-    for (JButton button : skillButtons) {
-      button.setEnabled(false);
-    }
+    // 重置玩家和對手的 HP 和其他狀態
+    this.player.heal(this.player.getMaxHealth() - this.player.getHealth());
+    this.opponent.heal(this.opponent.getMaxHealth() - this.opponent.getHealth());
+    this.player.setParalyzed(false);
+    this.opponent.setParalyzed(false);
+    this.player.setBurnDuration(0);
+    this.opponent.setBurnDuration(0);
+    this.opponent.setdamageReductionDuration(0);
+
+    // 更新 UI
+    updateHp();
+    updateHpBars();
+
+    playerImageLabel.setIcon(player.getImageIcon());
+    opponentImageLabel.setIcon(opponent.getImageIcon());
+    updateSkillToolTips();
+    updateHpBars();
+
+    isPlayerTurn = true; // 設定玩家回合
   }
+
+
 
   private JProgressBar createHpBar(int maxHealth, int currentHealth) {
     JProgressBar hpBar = new JProgressBar(0, maxHealth);
@@ -416,7 +425,16 @@ public class GameGUI extends JFrame {
     skillPanel.revalidate();
     skillPanel.repaint();
   }
-
+  public void updateSkillButtons() {
+    for (int i = 0; i < skillButtons.length; i++) {
+      Skill skill = player.getSkills().get(i);
+      if (skill.getRemainingUses() <= 1) {
+        skillButtons[i].setEnabled(false); // 禁用技能按鈕
+      } else {
+        skillButtons[i].setEnabled(true); // 啟用技能按鈕
+      }
+    }
+  }
   private void updateSkillToolTips() {
     for (int i = 0; i < player.getSkills().size(); i++) {
       Skill skill = player.getSkills().get(i);
@@ -454,6 +472,13 @@ public class GameGUI extends JFrame {
     }
     outputHtml.append("</html>");
     outputLabel.setText(outputHtml.toString());
+  }
+  public boolean isPlayerTurn() {
+    return isPlayerTurn;
+  }
+
+  public void setPlayerTurn(boolean isPlayerTurn) {
+    this.isPlayerTurn = isPlayerTurn;
   }
 }
 

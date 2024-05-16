@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 public class StartWindow extends JFrame {
+  private MusicPlayer backgroundMusicPlayer;
   public StartWindow() {
     setTitle("Welcome to Pokemon Battle");
     setSize(800, 600);
@@ -16,6 +17,9 @@ public class StartWindow extends JFrame {
     BackgroundPanel backgroundPanel = new BackgroundPanel("src/resources/BG.png");
     backgroundPanel.setLayout(null); // Use null layout for absolute positioning
     setContentPane(backgroundPanel);
+
+    backgroundMusicPlayer = new MusicPlayer();
+    backgroundMusicPlayer.playMusic("src/resources/start_music.wav", -15.0f);
 
     // Create a JLabel for the start button
     ImageIcon startIcon = new ImageIcon("src/resources/START.png");
@@ -74,6 +78,7 @@ public class StartWindow extends JFrame {
             new Skill("光合作用", 0, 5, "Heal", 0)
     ), "src/resources/pokemon4.png");
 
+    backgroundMusicPlayer.stopMusic();
     GameGUI newGameGUI = new GameGUI(newPikachu, newCharmander, newSquirtle,newBulbasaur);
     newGameGUI.setVisible(true);
   }

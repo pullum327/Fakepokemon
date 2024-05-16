@@ -18,6 +18,7 @@ public class Pokemon {
   private int damageReduction;
   private int damageReductionDuration;
   private GameGUI gameGUI;
+  private MusicPlayer damageSoundPlayer;
 
   public Pokemon(String name, int level, int health, int attack, List<Skill> skills, String imagePath) {
     this.name = name;
@@ -71,6 +72,9 @@ public class Pokemon {
   public void setParalyzed(boolean paralyzed) {
     this.paralyzed = paralyzed;
   }
+  public void setdamageReductionDuration(int damageReductionDuration){
+    this.damageReductionDuration = damageReductionDuration;
+  }
 
   public int getBurnDuration() {
     return burnDuration;
@@ -98,12 +102,13 @@ public class Pokemon {
     health -= damage;
     if (health < 0) {
       health = 0;
+    }if (damage!=0) {
+      damageSoundPlayer = new MusicPlayer();
+      damageSoundPlayer.skillMusic("src/resources/heart.wav", -20.0f); // 替换为你的音效文件路径
+      gameGUI.appendOutput(name + " 受到了 " + damage + " 點傷害!");
     }
     if (gameGUI != null) {
       gameGUI.flashImage(gameGUI.getImageLabel(this), imagePath);
-    }
-    if (burnDuration == 0) {
-      gameGUI.appendOutput(name + " 受到了 " + damage + " 點傷害!");
     }
   }
 
